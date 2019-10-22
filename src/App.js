@@ -1,23 +1,7 @@
 import React from 'react';
-import gql from 'graphql-tag';
 import { useQuery, useMutation } from '@apollo/react-hooks';
+import { GET_TODO, CREATE_TODO } from './graphql/cache';
 import Button from '@material-ui/core/Button';
-
-const CREATE_TODO = gql`
-  mutation createTodo($id: Int!, $task: String!, $completed: Boolean!) {
-    createTodo(id: $id, task: $task, completed: $completed) @client
-  }
-`;
-
-const GET_TODO = gql`
-  {
-    newTodo @client {
-      id
-      task
-      completed
-    }
-  }
-`;
 
 function App() {
   const [createTodo] = useMutation(CREATE_TODO);
