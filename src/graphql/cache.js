@@ -24,13 +24,14 @@
 
 export const resolvers = {
   Mutation: {
-    createPerson: (_, { id, name }, { cache }) => {
-      const newPerson = {
-        __typename: 'Person',
+    createTodo: (_, { id, task, completed }, { cache }) => {
+      const newTodo = {
+        __typename: 'Todo',
         id,
-        name
+        task,
+        completed
       };
-      const data = { newPerson };
+      const data = { newTodo };
       cache.writeData({ data });
       return null;
     }

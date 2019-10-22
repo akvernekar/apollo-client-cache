@@ -3,38 +3,43 @@ import gql from 'graphql-tag';
 import { useQuery, useMutation } from '@apollo/react-hooks';
 import Button from '@material-ui/core/Button';
 
-const CREATE_PERSON = gql`
-  mutation createPerson($id: Int!, $name: String!) {
-    createPerson(id: $id, name: $name) @client
+const CREATE_TODO = gql`
+  mutation createTodo($id: Int!, $task: String!, $completed: Boolean!) {
+    createTodo(id: $id, task: $task, completed: $completed) @client
   }
 `;
 
-const GET_PERSON = gql`
+const GET_TODO = gql`
   {
-    newPerson @client {
+    newTodo @client {
       id
-      name
+      task
+      completed
     }
   }
 `;
 
 function App() {
-  const [createPerson] = useMutation(CREATE_PERSON);
-  const { loading, error, data } = useQuery(GET_PERSON);
+  const [createTodo] = useMutation(CREATE_TODO);
+  const { loading, error, data } = useQuery(GET_TODO);
 
   console.log('data', data);
 
   return (
     <div>
       <Button
-        onClick={() => createPerson({ variables: { id: 1, name: 'Gabe' } })}
+        onClick={() =>
+          createTodo({
+            variables: { id: 1, task: 'walk the dog', completed: false }
+          })
+        }
       >
         ADD
       </Button>
       {!error && loading ? (
         <div>Loading...</div>
-      ) : data && data.newPerson ? (
-        <div>{`${data.newPerson.id}: ${data.newPerson.name}`}</div>
+      ) : data && data.newTodo ? (
+        <div>{`${data.newTodo.id}: ${data.newTodo.task} - completed: ${data.newTodo.completed}`}</div>
       ) : (
         <div>NADA</div>
       )}
