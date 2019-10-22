@@ -1,14 +1,41 @@
 import gql from 'graphql-tag';
+const shortid = require('shortid');
+
+export const typeDefs = gql`
+  type Todo {
+    id: Int!
+    task: String!
+    completed: Boolean!
+  }
+  type Todos {
+    todos: [Todo]
+  }
+`;
 
 export const CREATE_TODO = gql`
   mutation createTodo($id: Int!, $task: String!, $completed: Boolean!) {
     createTodo(id: $id, task: $task, completed: $completed) @client
   }
 `;
+export const DELETE_TODO = gql`
+  mutation deleteTodo($id: Int!) {
+    deleteTodo(id: $id) @client
+  }
+`;
 
-export const GET_TODO = gql`
+export const GET_TODOS = gql`
   {
-    newTodo @client {
+    todos @client {
+      id
+      task
+      completed
+    }
+  }
+`;
+
+const query = gql`
+  query GetTodos {
+    todos @client {
       id
       task
       completed
@@ -18,14 +45,28 @@ export const GET_TODO = gql`
 
 export const resolvers = {
   Mutation: {
-    createTodo: (_, { id, task, completed }, { cache }) => {
+    createTodo: (_, { task }, { cache }) => {
       const newTodo = {
         __typename: 'Todo',
-        id,
+        id: shortid.generate(),
         task,
-        completed
+        completed: false
       };
-      const data = { newTodo };
+
+      try {
+        const { todos } = cache.readQuery({ query });
+        const data = { todos: [...todos, newTodo] };
+        cache.writeData({ data });
+        return null;
+      } catch {
+        const data = { todos: [newTodo] };
+        cache.writeData({ data });
+        return null;
+      }
+    },
+    deleteTodo: (_, { id }, { cache }) => {
+      const { todos } = cache.readQuery({ query });
+      const data = { todos: todos.filter(todo => todo.id !== id) };
       cache.writeData({ data });
       return null;
     }
