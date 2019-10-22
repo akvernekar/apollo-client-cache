@@ -1,11 +1,17 @@
 import React from 'react';
 import { useQuery, useMutation } from '@apollo/react-hooks';
-import { GET_TODOS, CREATE_TODO, DELETE_TODO } from './graphql/cache';
+import {
+  GET_TODOS,
+  CREATE_TODO,
+  DELETE_TODO,
+  UPDATE_TODO
+} from './graphql/cache';
 import Button from '@material-ui/core/Button';
 
 function App() {
   const [createTodo] = useMutation(CREATE_TODO);
   const [deleteTodo] = useMutation(DELETE_TODO);
+  const [updateTodo] = useMutation(UPDATE_TODO);
   const { loading, error, data } = useQuery(GET_TODOS);
 
   const RenderTodos = todos =>
@@ -16,6 +22,15 @@ function App() {
           <p>{`Completed: ${todo.completed}`}</p>
           <Button onClick={() => deleteTodo({ variables: { id: todo.id } })}>
             X
+          </Button>
+          <Button
+            onClick={() =>
+              updateTodo({
+                variables: { todo: { ...todo, task: 'OMG, this worked!' } }
+              })
+            }
+          >
+            UPDATE
           </Button>
         </div>
       </li>

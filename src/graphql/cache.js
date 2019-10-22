@@ -22,6 +22,11 @@ export const DELETE_TODO = gql`
     deleteTodo(id: $id) @client
   }
 `;
+export const UPDATE_TODO = gql`
+  mutation updateTodo($todo: Todo!) {
+    updateTodo(todo: $todo) @client
+  }
+`;
 
 export const GET_TODOS = gql`
   {
@@ -67,6 +72,16 @@ export const resolvers = {
     deleteTodo: (_, { id }, { cache }) => {
       const { todos } = cache.readQuery({ query });
       const data = { todos: todos.filter(todo => todo.id !== id) };
+      cache.writeData({ data });
+      return null;
+    },
+    updateTodo: (_, { todo }, { cache }) => {
+      const { todos } = cache.readQuery({ query });
+      const data = {
+        todos: todos.map(cachedTodo =>
+          cachedTodo.id === todo.id ? todo : cachedTodo
+        )
+      };
       cache.writeData({ data });
       return null;
     }
