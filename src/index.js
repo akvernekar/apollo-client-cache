@@ -4,7 +4,8 @@ import { ApolloClient } from 'apollo-client';
 import { ApolloProvider } from '@apollo/react-hooks';
 import { InMemoryCache } from 'apollo-cache-inmemory';
 import { typeDefs, resolvers } from './graphql/cache';
-import App from './App';
+import CssBaseline from '@material-ui/core/CssBaseline';
+import App from './components/App';
 
 const client = new ApolloClient({
   cache: new InMemoryCache(),
@@ -14,7 +15,9 @@ const client = new ApolloClient({
 
 const TogglesApp = () => (
   <ApolloProvider client={client}>
-    <App />
+    <CssBaseline>
+      <App />
+    </CssBaseline>
   </ApolloProvider>
 );
 
