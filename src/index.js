@@ -8,6 +8,7 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 import App from './components/App';
 
 const client = new ApolloClient({
+  connectToDevtools: true,
   cache: new InMemoryCache(),
   typeDefs,
   resolvers
